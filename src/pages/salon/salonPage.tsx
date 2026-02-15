@@ -22,6 +22,7 @@ import {
 import { useQuery } from '@tanstack/react-query'
 import { getSalonById } from '../../actions/customerActions'
 import { CircularProgress, Divider } from '@heroui/react'
+import { isValidImageUrl } from '../../utils/validateImage'
 
 const SalonPage = () => {
   const { salonId } = useParams()
@@ -35,7 +36,9 @@ const SalonPage = () => {
     enabled: !!salonId,
   })
 
-  const imageUrls = salonData?.images?.map(img => img.url) || []
+  const imageUrls = salonData?.images
+  ?.map(img => img.url)
+  .filter(url => isValidImageUrl(url)) || [];
   const scrollRef = useRef<HTMLDivElement>(null)
 
   const handleOpen = () => setIsOpen(true)
@@ -63,11 +66,11 @@ const SalonPage = () => {
               } relative`}
             >
               <img
-                src={salonData.images[0].url}
+                src={imageUrls[0] || '/placeholder-image.avif'}
                 alt={`${salonData.name} - Image 1`}
                 className='w-full h-full object-cover rounded-xl'
                 onError={e => {
-                  e.currentTarget.src = '/signup-drawing.avif'
+                  e.currentTarget.src = '/placeholder-image.avif'
                 }}
               />
             </div>
@@ -79,9 +82,12 @@ const SalonPage = () => {
                 } relative`}
               >
                 <img
-                  src={salonData.images[1].url}
+                  src={imageUrls[1] || '/placeholder-image.avif'}
                   alt={`${salonData.name} - Image 2`}
                   className='w-full h-full object-cover rounded-xl'
+                  onError={e => {
+                    e.currentTarget.src = '/placeholder-image.avif'
+                  }}
                 />
               </div>
             )}
@@ -90,9 +96,12 @@ const SalonPage = () => {
               {salonData.images[2] && (
                 <>
                   <img
-                    src={salonData.images[2].url}
+                    src={imageUrls[2] || '/placeholder-image.avif'}
                     alt={`${salonData.name} - Image 3`}
                     className='w-full h-full object-cover rounded-xl'
+                    onError={e => {
+                      e.currentTarget.src = '/placeholder-image.avif'
+                    }}
                   />
                   {salonData.images.length > 3 && (
                     <div
