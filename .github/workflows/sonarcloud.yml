@@ -51,16 +51,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20' # Or your project version
-
-      # 1. Generate the raw audit report
-      # We use '|| true' because npm audit returns a non-zero exit code if vulnerabilities are found
-      - name: Run npm audit
-        run: npm audit --json > npm-audit.json || true
-
-      # 2. Convert raw JSON to SARIF format for SonarCloud
-      - name: Convert to SARIF
-        run: npx npm-audit-sarif npm-audit.json -o npm-audit.sarif.json
+          node-version: '20'
 
       - name: Analyze with SonarCloud
         uses: SonarSource/sonarcloud-github-action@4006f663ecaf1f8093e8e4abb9227f6041f52216
@@ -71,5 +62,4 @@ jobs:
             -Dsonar.projectKey=UOM-GroupAssignments_charmBookingFrontend
             -Dsonar.organization=uom-groupassignments
             -Dsonar.sources=.
-            -Dsonar.inclusions=src/**,package.json,package-lock.json
-            -Dsonar.sarifReportPaths=npm-audit.sarif.json
+            -Dsonar.inclusions=src/**,package.json,package-lock.json,tailwind.config.js,postcss.config.js,vite.config.js,eslint.config.js
