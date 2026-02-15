@@ -65,3 +65,18 @@ export async function failVerification(salonId: string, authHeader: string): Pro
   )
   return response.data
 }
+
+export async function getSecureDocumentUrl(
+  documentId: string,
+  authHeader: string,
+): Promise<string> {
+  const response = await axiosInstance.get(`/api/documents/secure/${documentId}`, {
+    headers: {
+      Authorization: authHeader,
+    },
+    responseType: 'blob',
+  })
+  // Create a blob URL for the document
+  const blob = new Blob([response.data])
+  return URL.createObjectURL(blob)
+}

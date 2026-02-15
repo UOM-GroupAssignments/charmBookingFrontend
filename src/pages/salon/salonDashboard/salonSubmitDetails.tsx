@@ -40,10 +40,84 @@ export const SalonSubmitDetails = ({ salonId }: { salonId: string }) => {
     },
   })
 
+  // Enhanced file validation function
+  const validateFile = (file: File): { isValid: boolean; error?: string } => {
+    // File size validation (10MB limit)
+    const maxSize = 10 * 1024 * 1024
+    if (file.size > maxSize) {
+      return { isValid: false, error: 'File size must be less than 10MB' }
+    }
+
+    // Minimum file size (prevents empty files)
+    if (file.size < 1024) {
+      return { isValid: false, error: 'File appears to be empty or corrupted' }
+    }
+
+    // Strict MIME type validation
+    const allowedTypes = ['application/pdf', 'image/jpeg', 'image/jpg', 'image/png']
+
+    if (!allowedTypes.includes(file.type)) {
+      return {
+        isValid: false,
+        error: `Invalid file type. Only PDF, JPG, and PNG files are allowed. Detected: ${file.type}`,
+      }
+    }
+
+    // File extension validation
+    const allowedExtensions = ['pdf', 'jpg', 'jpeg', 'png']
+    const extension = file.name.split('.').pop()?.toLowerCase()
+
+    if (!extension || !allowedExtensions.includes(extension)) {
+      return {
+        isValid: false,
+        error: 'Invalid file extension. Only .pdf, .jpg, .jpeg, .png files are allowed.',
+      }
+    }
+
+    // Extension-MIME type consistency check
+    const extensionMimeMap: { [key: string]: string[] } = {
+      pdf: ['application/pdf'],
+      jpg: ['image/jpeg', 'image/jpg'],
+      jpeg: ['image/jpeg', 'image/jpg'],
+      png: ['image/png'],
+    }
+
+    if (!extensionMimeMap[extension]?.includes(file.type)) {
+      return { isValid: false, error: 'File extension does not match file type' }
+    }
+
+    return { isValid: true }
+  }
+
   const handleFileChange = (type: SalonDocumentType, file: File | null) => {
+    if (!file) {
+      setDocuments(prev => ({
+        ...prev,
+        [type]: undefined,
+      }))
+      return
+    }
+
+    // Validate file
+    const validation = validateFile(file)
+    if (!validation.isValid) {
+      addToast({
+        title: 'Invalid File',
+        description: validation.error,
+        color: 'danger',
+      })
+      return
+    }
+
+    addToast({
+      title: 'File Valid',
+      description: `${file.name} has been validated successfully`,
+      color: 'success',
+    })
+
     setDocuments(prev => ({
       ...prev,
-      [type]: file || undefined,
+      [type]: file,
     }))
   }
 
@@ -116,43 +190,52 @@ export const SalonSubmitDetails = ({ salonId }: { salonId: string }) => {
           <label className='block mb-1 font-medium'>ID Proof (NIC/Passport)</label>
           <Input
             type='file'
-            accept='image/*,application/pdf'
+            accept='.pdf,.jpg,.jpeg,.png'
             required
-            onChange={e =>
-              handleFileChange(
-                SalonDocumentType.ID_PROOF,
-                e.target.files && e.target.files[0] ? e.target.files[0] : null,
-              )
-            }
+            onChange={e => {
+              const file = e.target.files && e.target.files[0] ? e.target.files[0] : null
+              handleFileChange(SalonDocumentType.ID_PROOF, file)
+              // Clear the input if validation fails
+              if (file && !validateFile(file).isValid) {
+                e.target.value = ''
+              }
+            }}
           />
+          <p className='text-xs text-gray-500 mt-1'>Accepted formats: PDF, JPG, PNG (Max: 10MB)</p>
         </div>
         <div>
           <label className='block mb-1 font-medium'>Banking Proof</label>
           <Input
             type='file'
-            accept='image/*,application/pdf'
+            accept='.pdf,.jpg,.jpeg,.png'
             required
-            onChange={e =>
-              handleFileChange(
-                SalonDocumentType.BANKING_PROOF,
-                e.target.files && e.target.files[0] ? e.target.files[0] : null,
-              )
-            }
+            onChange={e => {
+              const file = e.target.files && e.target.files[0] ? e.target.files[0] : null
+              handleFileChange(SalonDocumentType.BANKING_PROOF, file)
+              // Clear the input if validation fails
+              if (file && !validateFile(file).isValid) {
+                e.target.value = ''
+              }
+            }}
           />
+          <p className='text-xs text-gray-500 mt-1'>Accepted formats: PDF, JPG, PNG (Max: 10MB)</p>
         </div>
         <div>
           <label className='block mb-1 font-medium'>Company Registration</label>
           <Input
             type='file'
-            accept='image/*,application/pdf'
+            accept='.pdf,.jpg,.jpeg,.png'
             required
-            onChange={e =>
-              handleFileChange(
-                SalonDocumentType.COMPANY_REGISTRATION,
-                e.target.files && e.target.files[0] ? e.target.files[0] : null,
-              )
-            }
+            onChange={e => {
+              const file = e.target.files && e.target.files[0] ? e.target.files[0] : null
+              handleFileChange(SalonDocumentType.COMPANY_REGISTRATION, file)
+              // Clear the input if validation fails
+              if (file && !validateFile(file).isValid) {
+                e.target.value = ''
+              }
+            }}
           />
+          <p className='text-xs text-gray-500 mt-1'>Accepted formats: PDF, JPG, PNG (Max: 10MB)</p>
         </div>
         <Button color='primary' type='submit' isLoading={isPending}>
           Submit
