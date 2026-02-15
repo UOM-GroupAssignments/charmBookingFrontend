@@ -29,6 +29,7 @@ export const BookTimeAndDate = () => {
     const script = document.createElement('script')
     script.src = 'https://www.payhere.lk/lib/payhere.js'
     script.type = 'text/javascript'
+    script.crossOrigin = 'anonymous'
     script.async = true
     document.body.appendChild(script)
     return () => {
