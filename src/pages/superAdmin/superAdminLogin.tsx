@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import useSignIn from 'react-auth-kit/hooks/useSignIn'
 import axios from 'axios'
 import { Button, Input, Spinner } from '@heroui/react'
@@ -12,8 +12,42 @@ export default function SuperAdminLogin() {
   const navigate = useNavigate()
   const [formData, setFormData] = useState({ username: '', password: '' })
   const [error, setError] = useState('')
+  const [lockedUntil, setLockedUntil] = useState<Date | null>(null)
+  const [countdown, setCountdown] = useState('')
   const [subLoading, setSubLoading] = useState(false)
   const signIn = useSignIn<SuperAdminLoginResponse>()
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
+
+  useEffect(() => {
+    if (!lockedUntil) {
+      setCountdown('')
+      if (timerRef.current) clearInterval(timerRef.current)
+      return
+    }
+
+    const tick = () => {
+      const now = new Date()
+      const diff = lockedUntil.getTime() - now.getTime()
+      if (diff <= 0) {
+        setLockedUntil(null)
+        setCountdown('')
+        setError('')
+        if (timerRef.current) clearInterval(timerRef.current)
+        return
+      }
+      const mins = Math.floor(diff / 60000)
+      const secs = Math.floor((diff % 60000) / 1000)
+      setCountdown(
+        mins > 0 ? `${mins}m ${secs.toString().padStart(2, '0')}s` : `${secs}s`,
+      )
+    }
+
+    tick()
+    timerRef.current = setInterval(tick, 1000)
+    return () => {
+      if (timerRef.current) clearInterval(timerRef.current)
+    }
+  }, [lockedUntil])
 
   const { mutate, isPending } = useMutation({
     mutationFn: async ({ username, password }: { username: string; password: string }) => {
@@ -38,9 +72,19 @@ export default function SuperAdminLogin() {
         navigate('/super-admin/dashboard', { replace: true })
       }
     },
-    onError: error => {
+    onError: (error: unknown) => {
       console.error('Login failed:', error)
-      setError('Login failed. Please try again.')
+      if (axios.isAxiosError(error) && error.response?.status === 429) {
+        const data = error.response.data
+        const message = data?.message || 'Account is temporarily locked.'
+        setError(message)
+        if (data?.lockedUntil) {
+          setLockedUntil(new Date(data.lockedUntil))
+        }
+      } else {
+        setLockedUntil(null)
+        setError('Login failed. Please try again.')
+      }
     },
   })
 
@@ -70,7 +114,16 @@ export default function SuperAdminLogin() {
             onChange={e => setFormData({ ...formData, password: e.target.value })}
           />
 
-          {error && <p className='text-red-600 font-light text-sm'>{error}</p>}
+          {error && (
+            <div className={`rounded-lg p-3 text-sm ${lockedUntil ? 'bg-amber-50 border border-amber-300 text-amber-800' : 'text-red-600'}`}>
+              <p className='font-medium'>{error}</p>
+              {lockedUntil && countdown && (
+                <p className='mt-1 text-xs'>
+                Try again in <span className='font-semibold'>{countdown}</span>
+                </p>
+              )}
+            </div>
+          )}
           {subLoading ? (
             <Spinner color='primary' />
           ) : (
@@ -80,6 +133,7 @@ export default function SuperAdminLogin() {
                 color='secondary'
                 radius='lg'
                 variant='shadow'
+                isDisabled={!!lockedUntil}
                 className='mt-5 text-center w-full'
               >
                 Login
