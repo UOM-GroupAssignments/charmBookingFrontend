@@ -1,10 +1,11 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import {
   failVerification,
   getSalonDetails,
   getSalonDocuments,
+  getSecureDocumentUrl,
   verifySalon,
 } from '../../actions/superAdminActions'
 import { SalonDetails, SalonDocuments, VerificationStatus } from '../../types/superAdmin'
@@ -17,6 +18,27 @@ export function SalonVerifyPage() {
   const params = useParams<{ salonId: string }>()
   const navigate = useNavigate()
   const authHeader = useAuthHeader()
+  const [loadingDocuments, setLoadingDocuments] = useState<Record<string, boolean>>({})
+
+  const handleSecureDocumentAccess = async (documentId: string) => {
+    if (loadingDocuments[documentId]) return
+
+    setLoadingDocuments(prev => ({ ...prev, [documentId]: true }))
+    try {
+      const documentUrl = await getSecureDocumentUrl(documentId, authHeader!)
+      window.open(documentUrl, '_blank')
+      // Clean up the blob URL after a delay
+      setTimeout(() => URL.revokeObjectURL(documentUrl), 10000)
+    } catch (error) {
+      addToast({
+        title: 'Error accessing document',
+        description: 'Unable to load the document. Please try again.',
+        color: 'danger',
+      })
+    } finally {
+      setLoadingDocuments(prev => ({ ...prev, [documentId]: false }))
+    }
+  }
 
   useEffect(() => {
     if (!params.salonId) {
@@ -142,15 +164,15 @@ export function SalonVerifyPage() {
                   salonData?.verificationStatus === VerificationStatus.VERIFIED
                     ? 'bg-green-100 text-green-700'
                     : salonData?.verificationStatus === VerificationStatus.FAILED
-                    ? 'bg-red-100 text-red-700'
-                    : 'bg-yellow-100 text-yellow-700'
+                      ? 'bg-red-100 text-red-700'
+                      : 'bg-yellow-100 text-yellow-700'
                 }`}
               >
                 {salonData?.verificationStatus === VerificationStatus.VERIFIED
                   ? 'Verified'
                   : salonData?.verificationStatus === VerificationStatus.FAILED
-                  ? 'Failed'
-                  : 'Pending'}
+                    ? 'Failed'
+                    : 'Pending'}
               </span>
             </div>
           </div>
@@ -209,14 +231,13 @@ export function SalonVerifyPage() {
             {documents.map(doc => (
               <li key={doc.id} className='flex items-center gap-4'>
                 <span className='font-medium'>{doc.documentType}</span>
-                <a
-                  href={doc.url}
-                  target='_blank'
-                  rel='noopener noreferrer'
-                  className='text-blue-600 underline'
+                <button
+                  onClick={() => handleSecureDocumentAccess(doc.id)}
+                  disabled={loadingDocuments[doc.id]}
+                  className='text-blue-600 underline hover:text-blue-800 disabled:text-gray-400 disabled:cursor-not-allowed'
                 >
-                  View Document
-                </a>
+                  {loadingDocuments[doc.id] ? 'Loading...' : 'View Document'}
+                </button>
                 <span className='text-gray-500 text-sm'>
                   Uploaded: {new Date(doc.createdAt).toLocaleString()}
                 </span>
