@@ -7,7 +7,6 @@ import { Customer } from '../types/customer'
 const Header = () => {
   const navigate = useNavigate()
   const customer = useAuthUser<Customer>()
-  console.log('customer details:', customer)
   return (
     <Navbar maxWidth='full'>
       <NavbarBrand>
