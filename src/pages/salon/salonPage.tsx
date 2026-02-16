@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef } from 'react'
 import ModalComponent from '../../components/Modal'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
@@ -10,7 +10,7 @@ import {
 import StarRating from '../../components/StarRating'
 import { useParams } from 'react-router-dom'
 import ServiceField from '../../components/ServiceField'
-import { Category, Salon } from '../../types/salon'
+import { Category } from '../../types/salon'
 import { calculateRatingAverage } from '../../helpers'
 import ReviewCard from '../../components/Cards/ReviewCard'
 import {
@@ -29,6 +29,7 @@ const SalonPage = () => {
   console.log('Salon ID:', salonId)
   const [isOpen, setIsOpen] = useState(false)
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(null)
+  const [imgError, setImgError] = useState(false);
 
   const { data: salonData, isPending: loadingSalonData } = useQuery({
     queryKey: ['salon', salonId],
@@ -66,12 +67,10 @@ const SalonPage = () => {
               } relative`}
             >
               <img
-                src={imageUrls[0] || '/placeholder-image.avif'}
-                alt={`${salonData.name} - Image 1`}
+                src={imgError ? '/placeholder-image.avif' : imageUrls[0] || '/placeholder-image.avif'}
+                alt={`${salonData.name}`}
                 className='w-full h-full object-cover rounded-xl'
-                onError={e => {
-                  e.currentTarget.src = '/placeholder-image.avif'
-                }}
+                onError={() => setImgError(true)}
               />
             </div>
             {/* Second image in the first column of the second row */}
@@ -83,7 +82,7 @@ const SalonPage = () => {
               >
                 <img
                   src={imageUrls[1] || '/placeholder-image.avif'}
-                  alt={`${salonData.name} - Image 2`}
+                  alt={`${salonData.name}`}
                   className='w-full h-full object-cover rounded-xl'
                   onError={e => {
                     e.currentTarget.src = '/placeholder-image.avif'
@@ -97,7 +96,7 @@ const SalonPage = () => {
                 <>
                   <img
                     src={imageUrls[2] || '/placeholder-image.avif'}
-                    alt={`${salonData.name} - Image 3`}
+                    alt={salonData.name}
                     className='w-full h-full object-cover rounded-xl'
                     onError={e => {
                       e.currentTarget.src = '/placeholder-image.avif'
