@@ -8,6 +8,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faChevronLeft } from '@fortawesome/free-solid-svg-icons'
 import { useNavigate } from 'react-router-dom'
 import { useMutation } from '@tanstack/react-query'
+import logger from '../../utils/logger'
 
 const RegisterSalon = () => {
   const [step, setStep] = useState(1)
@@ -89,11 +90,11 @@ const RegisterSalon = () => {
   const { mutate, isPending } = useMutation({
     mutationFn: (formData: FormData) => registerSalon(formData),
     onSuccess: data => {
-      console.log('Salon registered successfully:', data)
+      logger.info('Salon registered successfully')
       navigate('/business/login-salon')
     },
     onError: error => {
-      console.error('Failed to register salon:', error)
+      logger.error('Failed to register salon:', error)
       // Optionally show error message
     },
   })

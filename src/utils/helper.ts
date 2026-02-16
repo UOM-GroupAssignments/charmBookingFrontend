@@ -1,7 +1,8 @@
 import { DayOfWeek, Salon } from '../types/salon'
+import logger from './logger'
 
 export const checkURLParam = (param: string | number | null | undefined) => {
-  console.log('Checking param:', param)
+  logger.debug('Checking param:', param)
   if (param === null || param === undefined || param === '' || param === 'null') {
     return false
   }

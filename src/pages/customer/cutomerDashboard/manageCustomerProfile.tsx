@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import logger from '../../../utils/logger'
 import {
   faUser,
   faLock,
@@ -52,11 +53,11 @@ export function ManageCustomerProfile() {
     mutationFn: (profileData: Partial<LoginResponse>) =>
       updateCustomerByID(customer!.customerId!, profileData, authHeader!),
     onSuccess: data => {
-      console.log('Profile updated successfully:', data)
+      logger.info('Profile updated successfully')
       // Add toast notification here
     },
     onError: error => {
-      console.error('Error updating profile:', error)
+      logger.error('Error updating profile:', error)
       // Add error notification here
     },
   })
@@ -66,11 +67,11 @@ export function ManageCustomerProfile() {
     mutationFn: (passwordData: UpdatePassword) =>
       updateCustomerPassword(customer!.customerId!, passwordData, authHeader!),
     onSuccess: data => {
-      console.log('Password updated successfully:', data)
+      logger.info('Password updated successfully')
       // Add toast notification here
     },
     onError: error => {
-      console.error('Error updating password:', error)
+      logger.error('Error updating password:', error)
       // Add error notification here
     },
   })

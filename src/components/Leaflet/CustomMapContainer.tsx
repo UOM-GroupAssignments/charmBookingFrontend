@@ -5,6 +5,7 @@ import { Typography } from '@mui/material'
 import L from 'leaflet'
 import { Salon } from '../../types/salon'
 import { calculateRatingAverage } from '../../helpers'
+import logger from '../../utils/logger'
 
 const defaultIcon = L.icon({
   iconUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png',
@@ -55,7 +56,7 @@ export default function CustomMapContainer({
   useEffect(() => {
     if (hoverId) {
       const salon = salons.find(salon => salon.id === hoverId)
-      console.log(salon)
+      logger.debug('Hovered salon:', salon)
       if (salon) {
         setCenter([Number(salon.latitude), Number(salon.longitude)])
       }

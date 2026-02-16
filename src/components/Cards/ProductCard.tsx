@@ -1,4 +1,5 @@
 import { Card, CardHeader, CardBody, Image } from '@heroui/react'
+import logger from '../../utils/logger'
 
 interface ProductCardProps {
   product: {
@@ -11,7 +12,7 @@ interface ProductCardProps {
 
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   return (
-    <Card className='py-4' isPressable shadow='sm' onPress={() => console.log('item pressed')}>
+    <Card className='py-4' isPressable shadow='sm' onPress={() => logger.debug('item pressed')}>
       <CardHeader className='pb-0 pt-2 px-4 flex-col items-start'>
         <Image alt={product.name} className='object-cover rounded-xl' src={product.image} />
       </CardHeader>

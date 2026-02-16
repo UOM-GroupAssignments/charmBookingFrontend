@@ -8,6 +8,7 @@ import { EmblaOptionsType } from 'embla-carousel'
 import { useEffect, useState } from 'react'
 import HorizontalScroll from '../components/horizontalScroll'
 import { Divider } from '@heroui/react'
+import logger from '../utils/logger'
 
 const products = [
   {
@@ -57,7 +58,7 @@ const HomePage = () => {
         setSalonId(data?.id || null)
         setSalons(data)
       } catch (error) {
-        console.error('Error fetching salons:', error)
+        logger.error('Error fetching salons:', error)
       }
     }
     getSalons()

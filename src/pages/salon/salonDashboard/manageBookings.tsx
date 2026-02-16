@@ -18,6 +18,7 @@ import { CustomTable } from '../../../components/Table'
 import { CustomCard } from '../../../components/Cards/CustomCard'
 import { Chip, Button, Input, toast, addToast } from '@heroui/react'
 import { useState } from 'react'
+import logger from '../../../utils/logger'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Booking, BookingStatus, PaymentStatus } from '../../../types/booking'
 import {
@@ -64,7 +65,7 @@ export function BookingsPage() {
         description: 'Failed to cancel booking',
         color: 'danger',
       })
-      console.error('Error cancelling booking:', error)
+      logger.error('Error cancelling booking:', error)
     },
   })
 
@@ -84,7 +85,7 @@ export function BookingsPage() {
         description: 'Failed to update booking status',
         color: 'danger',
       })
-      console.error('Error updating booking status:', error)
+      logger.error('Error updating booking status:', error)
     },
   })
 
@@ -108,7 +109,7 @@ export function BookingsPage() {
         description: 'Failed to confirm booking',
         color: 'danger',
       })
-      console.error('Error confirming booking:', error)
+      logger.error('Error confirming booking:', error)
     },
   })
 
@@ -454,7 +455,7 @@ export function BookingsPage() {
             variant='solid'
             color='danger'
             onPress={() => {
-              console.log('Confirming cancellation for bookingId:', cancelConfirmation)
+              logger.debug('Confirming cancellation for bookingId:', cancelConfirmation)
               if (cancelConfirmation) {
                 cancelBooking({ bookingId: cancelConfirmation })
               }

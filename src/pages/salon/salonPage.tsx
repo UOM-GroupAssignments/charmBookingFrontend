@@ -22,10 +22,11 @@ import {
 import { useQuery } from '@tanstack/react-query'
 import { getSalonById } from '../../actions/customerActions'
 import { CircularProgress, Divider } from '@heroui/react'
+import logger from '../../utils/logger'
 
 const SalonPage = () => {
   const { salonId } = useParams()
-  console.log('Salon ID:', salonId)
+  logger.debug('Salon ID:', salonId)
   const [isOpen, setIsOpen] = useState(false)
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(null)
 

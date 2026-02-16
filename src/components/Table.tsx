@@ -8,6 +8,7 @@ import {
   Pagination,
   getKeyValue,
 } from '@heroui/react'
+import logger from '../utils/logger'
 import { ReactNode, useMemo, useState } from 'react'
 
 type TableRowData = {
@@ -41,8 +42,8 @@ export function CustomTable({
       onPageChange(page)
     }
   }
-  console.log('Table Headers:', tableHeaders)
-  console.log('Table Data:', tableData)
+  logger.debug('Table Headers:', tableHeaders)
+  logger.debug('Table Data:', tableData)
   // Calculate paginated data
   const paginatedData = useMemo(() => {
     const startIdx = (currentPage - 1) * pageSize
