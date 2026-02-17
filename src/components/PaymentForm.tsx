@@ -6,6 +6,7 @@ import { Button, Input } from '@heroui/react'
 import { Card, CardHeader, CardBody } from '@heroui/react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCreditCard, faLock, faUser } from '@fortawesome/free-solid-svg-icons'
+import { paymentInitiate } from '../actions/paymentActions'
 
 interface PaymentFormProps {
   selectedDate: Date | null
@@ -26,20 +27,29 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
     name: '',
     email: '',
     phone: '',
-    cardNumber: '',
-    expiryDate: '',
-    cvv: '',
-    billingAddress: '',
   })
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }))
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    onPaymentSubmit(formData)
+  const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault()
+
+  try {
+    const data = await paymentInitiate({
+      bookingId: '123',
+      address1: 'N/A',
+      address2: 'N/A',
+      city: 'Colombo',
+    })
+
+    window.location.href = data.payment_url
+  } catch (error) {
+    console.error('Payment initiation failed', error)
   }
+}
+
 
   const formatDate = (date: Date | null) => {
     if (!date) return ''
@@ -124,65 +134,6 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
                 onChange={e => handleInputChange('phone', e.target.value)}
                 className='mt-1'
                 required
-              />
-            </div>
-          </CardBody>
-        </Card>
-
-        {/* Payment Information */}
-        <Card className='booking-card'>
-          <CardHeader className='text-base flex items-center space-x-2'>
-            <FontAwesomeIcon icon={faCreditCard} className='w-4 h-4' />
-            <span>Payment Information</span>
-            <FontAwesomeIcon icon={faLock} className='w-4 h-4 text-muted-foreground ml-auto' />
-          </CardHeader>
-          <CardBody className='space-y-4'>
-            <div>
-              <Input
-                id='cardNumber'
-                label='Card Number'
-                type='text'
-                placeholder='1234 5678 9012 3456'
-                value={formData.cardNumber}
-                onChange={e => handleInputChange('cardNumber', e.target.value)}
-                className='mt-1'
-                required
-              />
-            </div>
-            <div className='grid grid-cols-2 gap-4'>
-              <div>
-                <Input
-                  id='expiryDate'
-                  label='Expiry Date'
-                  type='text'
-                  placeholder='MM/YY'
-                  value={formData.expiryDate}
-                  onChange={e => handleInputChange('expiryDate', e.target.value)}
-                  className='mt-1'
-                  required
-                />
-              </div>
-              <div>
-                <Input
-                  id='cvv'
-                  label='CVV'
-                  type='text'
-                  placeholder='123'
-                  value={formData.cvv}
-                  onChange={e => handleInputChange('cvv', e.target.value)}
-                  className='mt-1'
-                  required
-                />
-              </div>
-            </div>
-            <div>
-              <Input
-                id='billingAddress'
-                type='text'
-                value={formData.billingAddress}
-                onChange={e => handleInputChange('billingAddress', e.target.value)}
-                className='mt-1'
-                label='Billing Address'
               />
             </div>
           </CardBody>

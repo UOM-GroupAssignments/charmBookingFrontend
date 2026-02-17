@@ -75,6 +75,7 @@ export interface AvailableWorkersResponse {
 }
 
 export interface PayHerePayload {
+  payment_url: string
   sandbox: boolean
   merchant_id: string // PayHere Merchant ID
   return_url: string // URL to redirect users when success

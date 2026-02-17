@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef } from 'react'
 import ModalComponent from '../../components/Modal'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
@@ -10,7 +10,7 @@ import {
 import StarRating from '../../components/StarRating'
 import { useParams } from 'react-router-dom'
 import ServiceField from '../../components/ServiceField'
-import { Category, Salon } from '../../types/salon'
+import { Category } from '../../types/salon'
 import { calculateRatingAverage } from '../../helpers'
 import ReviewCard from '../../components/Cards/ReviewCard'
 import {
@@ -23,12 +23,14 @@ import { useQuery } from '@tanstack/react-query'
 import { getSalonById } from '../../actions/customerActions'
 import { CircularProgress, Divider } from '@heroui/react'
 import logger from '../../utils/logger'
+import { isValidImageUrl } from '../../utils/validateImage'
 
 const SalonPage = () => {
   const { salonId } = useParams()
   logger.debug('Salon ID:', salonId)
   const [isOpen, setIsOpen] = useState(false)
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(null)
+  const [imgError, setImgError] = useState(false);
 
   const { data: salonData, isPending: loadingSalonData } = useQuery({
     queryKey: ['salon', salonId],
@@ -36,7 +38,9 @@ const SalonPage = () => {
     enabled: !!salonId,
   })
 
-  const imageUrls = salonData?.images?.map(img => img.url) || []
+  const imageUrls = salonData?.images
+  ?.map(img => img.url)
+  .filter(url => isValidImageUrl(url)) || [];
   const scrollRef = useRef<HTMLDivElement>(null)
 
   const handleOpen = () => setIsOpen(true)
@@ -64,12 +68,10 @@ const SalonPage = () => {
               } relative`}
             >
               <img
-                src={salonData.images[0].url}
-                alt={`${salonData.name} - Image 1`}
+                src={imgError ? '/placeholder-image.avif' : imageUrls[0] || '/placeholder-image.avif'}
+                alt={`${salonData.name}`}
                 className='w-full h-full object-cover rounded-xl'
-                onError={e => {
-                  e.currentTarget.src = '/signup-drawing.avif'
-                }}
+                onError={() => setImgError(true)}
               />
             </div>
             {/* Second image in the first column of the second row */}
@@ -80,9 +82,12 @@ const SalonPage = () => {
                 } relative`}
               >
                 <img
-                  src={salonData.images[1].url}
-                  alt={`${salonData.name} - Image 2`}
+                  src={imageUrls[1] || '/placeholder-image.avif'}
+                  alt={`${salonData.name}`}
                   className='w-full h-full object-cover rounded-xl'
+                  onError={e => {
+                    e.currentTarget.src = '/placeholder-image.avif'
+                  }}
                 />
               </div>
             )}
@@ -91,9 +96,12 @@ const SalonPage = () => {
               {salonData.images[2] && (
                 <>
                   <img
-                    src={salonData.images[2].url}
-                    alt={`${salonData.name} - Image 3`}
+                    src={imageUrls[2] || '/placeholder-image.avif'}
+                    alt={salonData.name}
                     className='w-full h-full object-cover rounded-xl'
+                    onError={e => {
+                      e.currentTarget.src = '/placeholder-image.avif'
+                    }}
                   />
                   {salonData.images.length > 3 && (
                     <div

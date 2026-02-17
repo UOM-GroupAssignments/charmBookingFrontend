@@ -1,14 +1,13 @@
-import Header from '../components/Header'
-import Footer from '../components/Footer'
 import SearchBar from '../components/SearchBar'
 import ProductCard from '../components/Cards/ProductCard'
 import SalonCard from '../components/Cards/SalonCard'
 import EmblaCarousel from '../components/Carousel'
 import { EmblaOptionsType } from 'embla-carousel'
-import { useEffect, useState } from 'react'
 import HorizontalScroll from '../components/horizontalScroll'
 import { Divider } from '@heroui/react'
 import logger from '../utils/logger'
+import { useQuery } from '@tanstack/react-query'
+import { getSalons } from '../actions/salonActions'
 
 const products = [
   {
@@ -50,7 +49,7 @@ const HomePage = () => {
   useEffect(() => {
     const getSalons = async () => {
       try {
-        const response = await fetch('http://localhost:3000/salon/getSalons')
+        const response = await fetch('https://localhost:3000/salon/getSalons')
         if (!response.ok) {
           throw new Error('Network response was not ok')
         }
@@ -82,7 +81,7 @@ const HomePage = () => {
         <Divider />
         <HorizontalScroll size={4}>
           {salons?.map(salon => (
-            <SalonCard key={salonId} salon={salon} />
+            <SalonCard key={salon.id} salon={salon} />
           ))}
         </HorizontalScroll>
       </div>
