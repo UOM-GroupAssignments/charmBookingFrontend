@@ -1,13 +1,12 @@
-import Header from '../components/Header'
-import Footer from '../components/Footer'
 import SearchBar from '../components/SearchBar'
 import ProductCard from '../components/Cards/ProductCard'
 import SalonCard from '../components/Cards/SalonCard'
 import EmblaCarousel from '../components/Carousel'
 import { EmblaOptionsType } from 'embla-carousel'
-import { useEffect, useState } from 'react'
 import HorizontalScroll from '../components/horizontalScroll'
 import { Divider } from '@heroui/react'
+import { useQuery } from '@tanstack/react-query'
+import { getSalons } from '../actions/salonActions'
 
 const products = [
   {
@@ -81,7 +80,7 @@ const HomePage = () => {
         <Divider />
         <HorizontalScroll size={4}>
           {salons?.map(salon => (
-            <SalonCard key={salonId} salon={salon} />
+            <SalonCard key={salon.id} salon={salon} />
           ))}
         </HorizontalScroll>
       </div>
