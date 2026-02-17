@@ -44,6 +44,7 @@ const OPTIONS: EmblaOptionsType = { loop: true, duration: 60 }
 const SLIDES = ['/image1.avif', '/image2.jpeg', '/image3.avif']
 
 const HomePage = () => {
+<<<<<<< R16-attacker-extracts-user-PII-from-browser-console-logs
   const [salons, setSalons] = useState([])
   const [salonId, setSalonId] = useState<string | null>(null)
   useEffect(() => {
@@ -62,6 +63,12 @@ const HomePage = () => {
     }
     getSalons()
   }, [])
+=======
+  const { data: salons = [] } = useQuery({
+    queryKey: ['salons'],
+    queryFn: getSalons,
+  })
+>>>>>>> master
 
   return (
     <div>
