@@ -23,7 +23,6 @@ export function BookingConfirmationStep({
   salonId: string | undefined
 }) {
   const user = useAuthUser<Customer>()
-  console.log(user)
   const { data: salon } = useQuery({
     queryKey: ['salon', salonId],
     queryFn: () => getSalonProfile(salonId!),

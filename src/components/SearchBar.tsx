@@ -8,6 +8,7 @@ import {
   AutocompleteItem,
   addToast,
 } from '@heroui/react'
+import logger from '../utils/logger'
 import { Key, useEffect, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { getAllCategories } from '../actions/salonActions'
@@ -73,7 +74,7 @@ const SearchBar = ({
             setLongitude(position.coords.longitude)
           },
           error => {
-            console.error('Error getting location:', error)
+            logger.error('Error getting location:', error)
           },
         )
       } else {
@@ -128,7 +129,7 @@ const SearchBar = ({
     }
 
     if (hasError) return
-    console.log('Navigating to search with params:', {
+    logger.debug('Navigating to search with params:', {
       category,
       latitude,
       longitude,
@@ -151,7 +152,7 @@ const SearchBar = ({
           setLongitude(position.coords.longitude)
         },
         error => {
-          console.error('Error getting location:', error)
+          logger.error('Error getting location:', error)
         },
       )
     } else {
@@ -173,7 +174,7 @@ const SearchBar = ({
         isLoading={isLoading}
         defaultSelectedKeys={[category]}
         onSelectionChange={key => {
-          console.log('Selected category:', key.currentKey)
+          logger.debug('Selected category:', key.currentKey)
           setCategory(key.currentKey as string)
           setCategoryError(null)
         }}

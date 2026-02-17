@@ -7,6 +7,7 @@ import SalonGrid from '../../components/SalonGrid'
 import { ScrollShadow, Spinner, Link } from '@heroui/react'
 import SearchBar from '../../components/SearchBar'
 import { checkURLParam } from '../../utils/helper'
+import logger from '../../utils/logger'
 
 const SearchSalons = () => {
   const navigate = useNavigate()
@@ -21,7 +22,7 @@ const SearchSalons = () => {
   const [hoveredSalon, setHoveredSalon] = useState<string | undefined>(undefined)
 
   useEffect(() => {
-    console.log({ category, location, latitude, longitude, date, time })
+    logger.debug('Search params:', { category, location, latitude, longitude, date, time })
     if (
       !checkURLParam(category) ||
       !checkURLParam(location) ||
@@ -45,7 +46,7 @@ const SearchSalons = () => {
         time: time!,
       }),
   })
-  console.log(salons)
+  logger.debug('Fetched salons:', salons)
   return (
     <div className='flex flex-col items-center'>
       <div className='w-full flex justify-between px-8 py-2 bg-white shadow-md'>

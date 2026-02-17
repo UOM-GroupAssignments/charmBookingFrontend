@@ -9,6 +9,7 @@ import useAuthUser from 'react-auth-kit/hooks/useAuthUser'
 import { Customer } from '../../types/customer'
 import { addToast, Button, Input, Spinner } from '@heroui/react'
 import { useNavigate } from 'react-router-dom'
+import logger from '../../utils/logger'
 
 export function PaymentStep({
   salonId,
@@ -49,7 +50,7 @@ export function PaymentStep({
         description: 'This Booking is no longer available.',
         color: 'danger',
       })
-      console.error('Booking error:', error)
+      logger.error('Booking error:', error)
     },
   })
 
@@ -65,7 +66,7 @@ export function PaymentStep({
         }
         payhere.startPayment(payHerePayload)
       } else {
-        console.error('PayHere SDK not loaded')
+        logger.error('PayHere SDK not loaded')
       }
     },
   })
@@ -80,7 +81,7 @@ export function PaymentStep({
 
       // Called when payment is completed successfully
       payhere.onCompleted = function onCompleted(orderId: string) {
-        console.log('Payment completed. OrderID:', orderId)
+        logger.info('Payment completed. OrderID:', orderId)
         navigate('/customer/bookings')
       }
 
@@ -94,7 +95,7 @@ export function PaymentStep({
           description: 'You have cancelled the payment.',
           color: 'warning',
         })
-        console.warn('Payment dismissed')
+        logger.warn('Payment dismissed')
       }
 
       // Called if an error occurs
@@ -107,7 +108,7 @@ export function PaymentStep({
           description: 'An error occurred during payment.',
           color: 'danger',
         })
-        console.error('Payment error:', error)
+        logger.error('Payment error:', error)
       }
     }
   }, [bookingResponse, cancelBookingMutation, navigate, user?.customerId])

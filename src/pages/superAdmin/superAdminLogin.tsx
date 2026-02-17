@@ -6,6 +6,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { useMutation } from '@tanstack/react-query'
 import { loginSuperAdmin } from '../../actions/superAdminActions'
 import { SuperAdminLoginResponse } from '../../types/superAdmin'
+import logger from '../../utils/logger'
 
 export default function SuperAdminLogin() {
   const location = useLocation()
@@ -52,7 +53,7 @@ export default function SuperAdminLogin() {
   const { mutate, isPending } = useMutation({
     mutationFn: async ({ username, password }: { username: string; password: string }) => {
       const res = await loginSuperAdmin(username, password)
-      console.log('logged in super admin', res)
+      logger.debug('logged in super admin')
       return res
     },
     onSuccess: data => {
@@ -73,7 +74,7 @@ export default function SuperAdminLogin() {
       }
     },
     onError: (error: unknown) => {
-      console.error('Login failed:', error)
+      logger.error('Login failed:', error)
       if (axios.isAxiosError(error) && error.response?.status === 429) {
         const data = error.response.data
         const message = data?.message || 'Account is temporarily locked.'

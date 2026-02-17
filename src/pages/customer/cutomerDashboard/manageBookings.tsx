@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import logger from '../../../utils/logger'
 import {
   faCalendar,
   faClock,
@@ -68,7 +69,7 @@ export function CustomerBookingsPage() {
         description: 'Failed to cancel booking. Please try again.',
         color: 'danger',
       })
-      console.error('Error cancelling booking:', error)
+      logger.error('Error cancelling booking:', error)
     },
   })
 
@@ -206,7 +207,7 @@ export function CustomerBookingsPage() {
             color='danger'
             isDisabled={isCancelling}
             onPress={() => {
-              console.log('Initiating cancellation for bookingId:', booking.id)
+              logger.debug('Initiating cancellation for bookingId:', booking.id)
               setCancelConfirmation(booking.id)
             }}
           >
@@ -342,7 +343,7 @@ export function CustomerBookingsPage() {
             variant='solid'
             color='danger'
             onPress={() => {
-              console.log('Confirming cancellation for bookingId:', cancelConfirmation)
+              logger.debug('Confirming cancellation for bookingId:', cancelConfirmation)
               if (cancelConfirmation) {
                 cancelBooking(cancelConfirmation)
               }

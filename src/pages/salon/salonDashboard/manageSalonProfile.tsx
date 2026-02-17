@@ -25,6 +25,7 @@ import CustomUpload from '../../../components/ImageUpload'
 import useAuthUser from 'react-auth-kit/hooks/useAuthUser'
 import { SalonSubmitDetails } from './salonSubmitDetails'
 import { VerificationStatus } from '../../../types/superAdmin'
+import logger from '../../../utils/logger'
 
 export function AccountPage() {
   const [selected, setSelected] = useState('profile')
@@ -46,11 +47,11 @@ export function AccountPage() {
       updateSalonProfile(admin!.salonId, profileData),
     onSuccess: data => {
       // Handle success, e.g., show a toast or update state
-      console.log('Profile updated successfully:', data)
+      logger.info('Profile updated successfully')
     },
     onError: error => {
       // Handle error, e.g., show an error message
-      console.error('Error updating profile:', error)
+      logger.error('Error updating profile:', error)
     },
   })
 
@@ -61,17 +62,17 @@ export function AccountPage() {
     queryFn: () => getSalonWeeklyHours(admin!.salonId),
   })
 
-  console.log('weekly hours', weeklyHours)
+  logger.debug('weekly hours', weeklyHours)
 
   const { mutate: updateWeeklyHours } = useMutation({
     mutationFn: (weeklyHours: WeeklyHours[]) => updateSalonWeeklyHours(admin!.salonId, weeklyHours),
     onSuccess: data => {
       // Handle success, e.g., show a toast or update state
-      console.log('Weekly hours updated successfully:', data)
+      logger.info('Weekly hours updated successfully')
     },
     onError: error => {
       // Handle error, e.g., show an error message
-      console.error('Error updating weekly hours:', error)
+      logger.error('Error updating weekly hours:', error)
     },
   })
 

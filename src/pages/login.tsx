@@ -6,6 +6,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { useMutation } from '@tanstack/react-query'
 import { loginCustomer } from '../actions/customerActions'
 import { LoginResponse } from '../types/customer'
+import logger from '../utils/logger'
 
 export default function Login() {
   const location = useLocation()
@@ -18,7 +19,7 @@ export default function Login() {
   const { mutate, isPending } = useMutation({
     mutationFn: async ({ email, password }: { email: string; password: string }) => {
       const res = await loginCustomer(email, password)
-      console.log('logged in customer', res)
+      logger.debug('logged in customer')
       return res
     },
     onSuccess: data => {
@@ -48,7 +49,7 @@ export default function Login() {
       }
     },
     onError: error => {
-      console.error('Login failed:', error)
+      logger.error('Login failed:', error)
       setError('Login failed. Please try again.')
     },
   })

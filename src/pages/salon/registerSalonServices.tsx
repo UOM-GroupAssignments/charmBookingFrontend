@@ -2,6 +2,7 @@ import { faChevronLeft } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import logger from '../../utils/logger'
 import {
   Dropdown,
   DropdownTrigger,
@@ -40,7 +41,7 @@ const RegisterSalonServices = () => {
       const data = await response.json()
       setCategories(data)
     } catch (error) {
-      console.error('Error fetching categories:', error)
+      logger.error('Error fetching categories:', error)
     }
   }
 
@@ -49,13 +50,13 @@ const RegisterSalonServices = () => {
   }, [])
 
   const handleCategorySelect = (category: string) => {
-    console.log('Selected category:', category)
+    logger.debug('Selected category:', category)
     // Handle category selection logic here
   }
 
   const handleAddService = () => {
     // Add your logic to save the service
-    console.log('New service:', newService)
+    logger.debug('New service:', newService)
     closeModal()
   }
 

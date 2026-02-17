@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import logger from '../../../utils/logger'
 import {
   faUsers,
   faPlus,
@@ -93,7 +94,7 @@ export function WorkersPage() {
         title: 'Failed to add worker',
         description: 'An error occurred while adding the worker.',
       })
-      console.error('Error adding worker:', error)
+      logger.error('Error adding worker:', error)
     },
   })
 
@@ -128,7 +129,7 @@ export function WorkersPage() {
         title: 'Failed to add leave',
         description: 'An error occurred while adding the leave.',
       })
-      console.error('Error adding leave:', error)
+      logger.error('Error adding leave:', error)
     },
   })
 

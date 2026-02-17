@@ -4,6 +4,7 @@ import { submitSalonDetails } from '../../../actions/salonActions'
 import { useMutation } from '@tanstack/react-query'
 import { SalonDocumentType } from '../../../types/superAdmin'
 import { useNavigate } from 'react-router-dom'
+import logger from '../../../utils/logger'
 
 export const SalonSubmitDetails = ({ salonId }: { salonId: string }) => {
   const navigate = useNavigate()
@@ -36,7 +37,7 @@ export const SalonSubmitDetails = ({ salonId }: { salonId: string }) => {
         description: 'Failed to submit salon details.',
         color: 'danger',
       })
-      console.error(error)
+      logger.error('Failed to submit salon details:', error)
     },
   })
 

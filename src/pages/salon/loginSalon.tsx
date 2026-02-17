@@ -5,6 +5,7 @@ import { loginSalon } from '../../actions/salonActions'
 import { useNavigate } from 'react-router-dom'
 import useSignIn from 'react-auth-kit/hooks/useSignIn'
 import { SalonAdmin } from '../../types/salon'
+import logger from '../../utils/logger'
 
 const LoginSalon = () => {
   const [form, setForm] = useState({ email: '', password: '' })
@@ -20,7 +21,7 @@ const LoginSalon = () => {
     mutationFn: ({ email, password }: { email: string; password: string }) =>
       loginSalon(email, password),
     onSuccess: data => {
-      console.log('Login successful:', data)
+      logger.debug('Login successful')
       signIn({
         auth: {
           token: data.token,
