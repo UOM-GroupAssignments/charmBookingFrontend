@@ -32,7 +32,7 @@ export default function SignUp() {
       if (formData.password !== confirmPassword) {
         throw new Error('Passwords do not match')
       }
-      const res = await axios.post('http://localhost:3000/user/register', formData)
+      const res = await axios.post('https://localhost:3000/user/register', formData)
       if (res.status === 201) {
         alert('User created successfully')
         // Reset form fields on successful signup
