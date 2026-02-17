@@ -43,13 +43,15 @@ const products = [
 const OPTIONS: EmblaOptionsType = { loop: true, duration: 60 }
 const SLIDES = ['/image1.avif', '/image2.jpeg', '/image3.avif']
 
+export const API_BASE_URL = import.meta.env.BACKEND_URL;
+
 const HomePage = () => {
   const [salons, setSalons] = useState([])
   const [salonId, setSalonId] = useState<string | null>(null)
   useEffect(() => {
     const getSalons = async () => {
       try {
-        const response = await fetch('http://localhost:3000/salon/getSalons')
+        const response = await fetch(`${API_BASE_URL}/salon/getSalons`);
         if (!response.ok) {
           throw new Error('Network response was not ok')
         }
