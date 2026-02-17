@@ -43,24 +43,10 @@ const OPTIONS: EmblaOptionsType = { loop: true, duration: 60 }
 const SLIDES = ['/image1.avif', '/image2.jpeg', '/image3.avif']
 
 const HomePage = () => {
-  const [salons, setSalons] = useState([])
-  const [salonId, setSalonId] = useState<string | null>(null)
-  useEffect(() => {
-    const getSalons = async () => {
-      try {
-        const response = await fetch('https://localhost:3000/salon/getSalons')
-        if (!response.ok) {
-          throw new Error('Network response was not ok')
-        }
-        const data = await response.json()
-        setSalonId(data?.id || null)
-        setSalons(data)
-      } catch (error) {
-        console.error('Error fetching salons:', error)
-      }
-    }
-    getSalons()
-  }, [])
+  const { data: salons = [] } = useQuery({
+    queryKey: ['salons'],
+    queryFn: getSalons,
+  })
 
   return (
     <div>
