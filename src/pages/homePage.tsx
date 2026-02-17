@@ -1,13 +1,12 @@
-import Header from '../components/Header'
-import Footer from '../components/Footer'
 import SearchBar from '../components/SearchBar'
 import ProductCard from '../components/Cards/ProductCard'
 import SalonCard from '../components/Cards/SalonCard'
 import EmblaCarousel from '../components/Carousel'
 import { EmblaOptionsType } from 'embla-carousel'
-import { useEffect, useState } from 'react'
 import HorizontalScroll from '../components/horizontalScroll'
 import { Divider } from '@heroui/react'
+import { useQuery } from '@tanstack/react-query'
+import { getSalons } from '../actions/salonActions'
 
 const products = [
   {
@@ -43,27 +42,11 @@ const products = [
 const OPTIONS: EmblaOptionsType = { loop: true, duration: 60 }
 const SLIDES = ['/image1.avif', '/image2.jpeg', '/image3.avif']
 
-export const API_BASE_URL = import.meta.env.BACKEND_URL;
-
 const HomePage = () => {
-  const [salons, setSalons] = useState([])
-  const [salonId, setSalonId] = useState<string | null>(null)
-  useEffect(() => {
-    const getSalons = async () => {
-      try {
-        const response = await fetch(`${API_BASE_URL}/salon/getSalons`);
-        if (!response.ok) {
-          throw new Error('Network response was not ok')
-        }
-        const data = await response.json()
-        setSalonId(data?.id || null)
-        setSalons(data)
-      } catch (error) {
-        console.error('Error fetching salons:', error)
-      }
-    }
-    getSalons()
-  }, [])
+  const { data: salons = [] } = useQuery({
+    queryKey: ['salons'],
+    queryFn: getSalons,
+  })
 
   return (
     <div>
@@ -83,7 +66,7 @@ const HomePage = () => {
         <Divider />
         <HorizontalScroll size={4}>
           {salons?.map(salon => (
-            <SalonCard key={salonId} salon={salon} />
+            <SalonCard key={salon.id} salon={salon} />
           ))}
         </HorizontalScroll>
       </div>
